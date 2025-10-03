@@ -6,6 +6,9 @@ if [ ! -d "flutter" ] ; then
 fi
 export PATH="$PATH:`pwd`/flutter/bin"
 
+# Configure project for web
+flutter create . --platforms web
+
 # Run Flutter build
 flutter pub get
 flutter build web --release
