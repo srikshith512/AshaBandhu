@@ -1,0 +1,199 @@
+# ===========================
+# FLUTTER / DART
+# ===========================
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.g.dart
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle
+/android/captures/
+/android/local.properties
+*.jks
+*.keystore
+
+# iOS
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/.generated/
+/ios/Runner.xcworkspace/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.xcuserstate
+
+# Web
+/web/build/
+
+# Hive Database
+*.hive
+*.lock
+
+# ===========================
+# NODE.JS / BACKEND
+# ===========================
+
+# Dependencies
+backend/node_modules/
+backend/package-lock.json
+backend/yarn.lock
+
+# Environment variables
+backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.*.local
+
+# Logs
+backend/logs/
+backend/*.log
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+
+# Runtime data
+backend/pids/
+backend/*.pid
+backend/*.seed
+backend/*.pid.lock
+
+# Coverage directory
+backend/coverage/
+backend/.nyc_output/
+
+# ===========================
+# DATABASE
+# ===========================
+
+# PostgreSQL
+*.sql.backup
+*.dump
+*.pgsql
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# ===========================
+# SECRETS & CREDENTIALS
+# ===========================
+
+# API Keys & Secrets
+**/secrets.dart
+**/secrets.json
+**/credentials.json
+**/.credentials/
+firebase_options.dart
+
+# Certificates
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+
+# ===========================
+# TESTING & DEBUGGING
+# ===========================
+
+# Test coverage
+coverage/
+test/coverage/
+*.lcov
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# ===========================
+# TEMPORARY & CACHE
+# ===========================
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+
+# OS specific
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100
+.Trashes
+
+# ===========================
+# DOCUMENTATION
+# ===========================
+
+# Generated docs (keep source docs)
+/docs/api/
+/docs/build/
+
+# ===========================
+# MISC
+# ===========================
+
+# Large media files (if any)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.flv
+
+# Backup files
+*.bak
+*.backup
+*~
