@@ -6,8 +6,9 @@ import '../models/patient_model.dart';
 import '../models/worker_model.dart';
 
 class ApiService {
-  // Backend server URL - change this to your server's IP/domain
-  static const String baseUrl = 'https://asha-bandhu-backend.vercel.app';
+  // Backend server URL - This must be updated to your LATEST deployment URL from Vercel
+  // Backend server URL - This must be updated to your LATEST deployment URL from Vercel
+  static const String baseUrl = 'https://asha-bandhu-backend-p0ikeaejo-srikshith512s-projects.vercel.app';
 
   // API endpoints
   static const String syncEndpoint = '/api/sync';
