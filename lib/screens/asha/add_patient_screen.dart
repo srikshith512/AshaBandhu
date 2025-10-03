@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import '../../providers/auth_provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../models/patient_model.dart';
 import '../../providers/patient_provider.dart';
@@ -109,13 +110,24 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     });
 
     try {
+      // Get the current worker from AuthProvider
+      final authProvider = context.read<AuthProvider>();
+      final currentWorker = authProvider.currentWorker;
+
+      if (currentWorker == null) {
+        throw Exception('No worker is currently logged in.');
+      }
+
       final patient = Patient(
         id: const Uuid().v4(),
         name: _nameController.text.trim(),
         age: int.parse(_ageController.text),
         gender: _selectedGender,
-        village: _villageController.text.trim(),
+        // Use the worker's village as the default or entered village
+        village: _villageController.text.trim().isNotEmpty ? _villageController.text.trim() : currentWorker.village,
         phoneNumber: _phoneController.text.trim(),
+        // This is the critical fix - assign the current worker's ID
+        assignedWorker: currentWorker.workerId,
         nextVisit: _nextVisitDate,
         ancVisit: _ancVisitDate,
         createdAt: DateTime.now(),
@@ -127,6 +139,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         syncStatus: 'local',
         version: 1,
       );
+      
+      // Debug print to see what's being sent
+      debugPrint('📦 Creating patient object: ${patient.toJson()}');
 
       await context.read<PatientProvider>().addPatient(patient);
 
