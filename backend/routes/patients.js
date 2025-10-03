@@ -81,8 +81,12 @@ router.get('/:id', auth, async (req, res) => {
 
 // POST (Create) a new patient
 router.post('/', auth, patientPostValidationRules, async (req, res) => {
+  console.log('--- CREATE PATIENT ROUTE HIT ---');
+  console.log('Request Body Received:', JSON.stringify(req.body, null, 2));
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.error('Validation failed:', errors.array());
     return res.status(400).json({ success: false, message: 'Validation failed', errors: errors.array() });
   }
 
@@ -94,15 +98,22 @@ router.post('/', auth, patientPostValidationRules, async (req, res) => {
   const assignedWorker = req.worker.workerId;
 
   try {
+    console.log('Attempting to insert into database...');
     const newPatient = await db.query(
       `INSERT INTO patients (id, name, age, gender, village, phone_number, assigned_worker, conditions, medications, next_visit, is_priority, sync_status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'synced') RETURNING *`,
       [ id || uuidv4(), name, age, gender, village, phoneNumber, assignedWorker, conditions, medications, nextVisit, isPriority ]
     );
+    
+    console.log('SUCCESS: Patient inserted into database.');
     res.status(201).json({ success: true, data: newPatient.rows[0] });
 
   } catch (error) {
-    console.error('Create patient DB error:', { message: error.message, detail: error.detail, requestBody: req.body });
+    console.error('--- DATABASE INSERT FAILED ---');
+    console.error('Error Message:', error.message);
+    console.error('Error Detail:', error.detail); // Very important for Postgres errors
+    console.error('Error Stack:', error.stack);
+    console.error('Request Body:', JSON.stringify(req.body, null, 2));
     res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
   }
 });

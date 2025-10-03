@@ -122,7 +122,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         id: const Uuid().v4(),
         name: _nameController.text.trim(),
         age: int.parse(_ageController.text),
-        gender: _selectedGender,
+        // Convert to lowercase to match backend validation
+        gender: _selectedGender.toLowerCase(),
         // Use the worker's village as the default or entered village
         village: _villageController.text.trim().isNotEmpty ? _villageController.text.trim() : currentWorker.village,
         phoneNumber: _phoneController.text.trim(),
