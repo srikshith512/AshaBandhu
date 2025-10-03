@@ -44,10 +44,16 @@ const auth = async (req, res, next) => {
       });
     }
 
-    console.error('Auth middleware error:', error);
+    console.error('--- AUTH MIDDLEWARE CRASH ---');
+    console.error('Error Message:', error.message);
+    console.error('Error Stack:', error.stack);
+    // If it's a DB error, it might have a 'code' property
+    if (error.code) {
+      console.error('DB Error Code:', error.code);
+    }
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error during authentication.'
     });
   }
 };
