@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ASHA Bandhu
 
 A Flutter-based offline-first health application for ASHA workers and PHC staff, designed to digitize rural healthcare delivery with advanced features like voice-based form filling, OCR auto-fetch, and AI-driven priority alerts.
@@ -108,3 +109,6 @@ The backend implements ABDM-compliant FHIR resource mapping for:
 ## License
 
 This project is part of a healthcare innovation initiative.
+=======
+# AshaBandhu
+>>>>>>> 5e90fa0e2f8801ec49974eca679d7acf82f70393
