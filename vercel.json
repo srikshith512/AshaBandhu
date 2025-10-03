@@ -1,8 +1,20 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "pubspec.yaml",
-      "use": "@jtmthf/vercel-flutter"
+      "src": "/pubspec.yaml",
+      "use": "@vercel/static-build",
+      "config": {
+        "installCommand": "flutter pub get",
+        "buildCommand": "if [ -d \"/vercel/path0/build/web\" ]; then flutter build web --release; else (cd /vercel/path0 && flutter build web --release); fi",
+        "outputDirectory": "build/web"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
