@@ -3,11 +3,10 @@ require('dotenv').config();
 const { Pool } = require('pg');
 
 // Use connection string if available, otherwise individual parameters
-const dbConfig = process.env.POSTGRES_URL_NON_POOLING ? {
-  connectionString: process.env.POSTGRES_URL_NON_POOLING,
+const dbConfig = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL ? {
+  connectionString: process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL,
   ssl: process.env.NODE_ENV === 'production' ? { 
-    rejectUnauthorized: false,
-    sslmode: 'require'
+    rejectUnauthorized: false
   } : false,
 } : {
   host: process.env.DB_HOST || process.env.POSTGRES_HOST || 'localhost',
