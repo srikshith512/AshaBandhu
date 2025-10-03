@@ -50,6 +50,26 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Test database connection endpoint
+app.get('/test-db', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    const result = await db.query('SELECT NOW() as current_time');
+    res.json({
+      success: true,
+      message: 'Database connection successful',
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Database test error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed',
+      error: error.message
+    });
+  }
+});
+
 // Migration endpoint (for production setup)
 app.get('/migrate', async (req, res) => {
   try {

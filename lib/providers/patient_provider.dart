@@ -235,22 +235,35 @@ class PatientProvider with ChangeNotifier {
         final apiPatients = await _apiService.fetchPatients();
         
         debugPrint('📥 Received ${apiPatients.length} patients from server');
-        
-        // Merge with local data (preserve any still-pending patients)
+
+        // Create a map of the API patients for efficient lookup
+        final apiPatientsMap = { for (var p in apiPatients) p.id: p };
+
+        // Get a fresh list of all local patient IDs
+        final localPatientIds = box.keys.cast<String>().toSet();
+
+        // Get IDs of patients that are still pending and shouldn't be touched
         final stillPendingIds = _patients
             .where((p) => p.syncStatus == 'local' || p.syncStatus == 'pending')
             .map((p) => p.id)
             .toSet();
-        
-        // Store all API patients
+
+        // 1. Update or add patients from the API
         for (final apiPatient in apiPatients) {
-          if (!stillPendingIds.contains(apiPatient.id)) {
-            apiPatient.syncStatus = 'synced';
-            await box.put(apiPatient.id, apiPatient);
+          apiPatient.syncStatus = 'synced';
+          await box.put(apiPatient.id, apiPatient);
+        }
+
+        // 2. Remove local patients that are NOT in the API response
+        //    UNLESS they are still pending sync.
+        for (final localId in localPatientIds) {
+          if (!apiPatientsMap.containsKey(localId) && !stillPendingIds.contains(localId)) {
+            await box.delete(localId);
+            debugPrint('🗑️ Removed stale patient from local cache: $localId');
           }
         }
         
-        // Reload all patients from Hive
+        // Reload all patients from Hive to reflect changes
         _patients = box.values.toList();
         _patients.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
         
