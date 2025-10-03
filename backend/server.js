@@ -37,13 +37,12 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({
+  res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
@@ -51,12 +50,100 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Migration endpoint (for production setup)
+app.get('/migrate', async (req, res) => {
+  try {
+    const db = require('./config/database');
+    
+    // Create workers table
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS workers (
+        worker_id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        village VARCHAR(255) NOT NULL,
+        role VARCHAR(20) NOT NULL CHECK (role IN ('asha', 'phc')),
+        pin VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(15),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Worker authentication table
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS worker_auth (
+        worker_id VARCHAR(50) PRIMARY KEY REFERENCES workers(worker_id) ON DELETE CASCADE,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Patients table
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS patients (
+        id UUID PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        age INTEGER NOT NULL,
+        gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female', 'other')),
+        village VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(15),
+        assigned_worker VARCHAR(50) REFERENCES workers(worker_id),
+        conditions TEXT[],
+        medications TEXT[],
+        next_visit TIMESTAMP,
+        is_priority BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        version INTEGER DEFAULT 1,
+        sync_status VARCHAR(20) DEFAULT 'synced'
+      );
+    `);
+
+    // Create function for updating timestamps
+    await db.query(`
+      CREATE OR REPLACE FUNCTION update_updated_at_column()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        NEW.updated_at = CURRENT_TIMESTAMP;
+        RETURN NEW;
+      END;
+      $$ language 'plpgsql';
+    `);
+
+    // Create triggers
+    await db.query(`
+      DROP TRIGGER IF EXISTS update_workers_updated_at ON workers;
+      DROP TRIGGER IF EXISTS update_patients_updated_at ON patients;
+      
+      CREATE TRIGGER update_workers_updated_at BEFORE UPDATE ON workers
+        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+      
+      CREATE TRIGGER update_patients_updated_at BEFORE UPDATE ON patients
+        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    `);
+
+    res.json({
+      success: true,
+      message: 'Database tables created successfully!',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Migration error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Migration failed',
+      error: error.message
+    });
+  }
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/workers', workerRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/sync', syncRoutes);
-
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({

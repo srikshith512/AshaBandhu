@@ -7,7 +7,7 @@ import '../models/worker_model.dart';
 
 class ApiService {
   // Backend server URL - change this to your server's IP/domain
-  static const String baseUrl = 'http://10.0.2.2:3000';
+  static const String baseUrl = 'https://asha-bandhu-backend.vercel.app';
 
   // API endpoints
   static const String syncEndpoint = '/api/sync';
@@ -93,7 +93,8 @@ class ApiService {
         if (data['data'] != null && data['data']['token'] != null) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('auth_token', data['data']['token']);
-          debugPrint('✅ Auth token stored: ${data['data']['token'].substring(0, 20)}...');
+          debugPrint(
+              '✅ Auth token stored: ${data['data']['token'].substring(0, 20)}...');
         } else {
           debugPrint('⚠️ No token in response: $data');
         }
