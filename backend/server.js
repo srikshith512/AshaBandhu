@@ -12,6 +12,9 @@ const patientRoutes = require('./routes/patients');
 const syncRoutes = require('./routes/sync');
 
 const app = express();
+
+// Trust the first proxy (Vercel)
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // Security middleware
