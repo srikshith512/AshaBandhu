@@ -2,11 +2,25 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-// Use connection string if available, otherwise individual parameters
-const dbConfig = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL ? {
-  connectionString: process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL,
+// Connection string configuration
+let connectionString = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL;
+
+// If using Supabase, modify the connection string to disable SSL verification
+if (connectionString && connectionString.includes('supabase.co')) {
+  // Add SSL parameters to bypass certificate issues
+  const url = new URL(connectionString);
+  url.searchParams.set('sslmode', 'require');
+  url.searchParams.set('sslcert', '');
+  url.searchParams.set('sslkey', '');
+  url.searchParams.set('sslrootcert', '');
+  connectionString = url.toString();
+}
+
+const dbConfig = connectionString ? {
+  connectionString: connectionString,
   ssl: process.env.NODE_ENV === 'production' ? { 
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
+    checkServerIdentity: false
   } : false,
 } : {
   host: process.env.DB_HOST || process.env.POSTGRES_HOST || 'localhost',
@@ -16,7 +30,7 @@ const dbConfig = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_UR
   password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD || 'password',
   ssl: process.env.NODE_ENV === 'production' ? { 
     rejectUnauthorized: false,
-    sslmode: 'require'
+    checkServerIdentity: false
   } : false,
 };
 
