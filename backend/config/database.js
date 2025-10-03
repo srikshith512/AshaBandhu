@@ -9,10 +9,9 @@ if (!connectionString) {
   throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set.');
 }
 
+// The Supabase connection string from the environment variables has all the necessary configuration.
 const pool = new Pool({
   connectionString,
-  // Use SSL in production, but not in local development (unless your local DB requires it)
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 pool.on('connect', () => {
