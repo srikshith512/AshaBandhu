@@ -5,14 +5,20 @@ const { Pool } = require('pg');
 // Use connection string if available, otherwise individual parameters
 const dbConfig = process.env.POSTGRES_URL_NON_POOLING ? {
   connectionString: process.env.POSTGRES_URL_NON_POOLING,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: process.env.NODE_ENV === 'production' ? { 
+    rejectUnauthorized: false,
+    sslmode: 'require'
+  } : false,
 } : {
   host: process.env.DB_HOST || process.env.POSTGRES_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT) || 5432,
   database: process.env.DB_NAME || process.env.POSTGRES_DATABASE || 'asha_bandhu',
   user: process.env.DB_USER || process.env.POSTGRES_USER || 'postgres',
   password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD || 'password',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: process.env.NODE_ENV === 'production' ? { 
+    rejectUnauthorized: false,
+    sslmode: 'require'
+  } : false,
 };
 
 const pool = new Pool(dbConfig);
