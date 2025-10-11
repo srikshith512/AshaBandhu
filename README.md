@@ -39,41 +39,6 @@ A Flutter-based offline-first health application for ASHA workers and PHC staff,
 - **Authentication**: JWT with bcrypt
 - **Analytics Dashboard**: React.js/Next.js
 
-## Getting Started
-
-### Prerequisites
-- Flutter SDK (>=3.0.0)
-- Dart SDK
-- Android Studio or VS Code with Flutter extensions
-- Node.js (for backend)
-
-### Installation
-
-1. Clone the repository
-```bash
-git clone <repository-url>
-cd asha_bandhu
-```
-
-2. Install dependencies
-```bash
-flutter pub get
-```
-
-3. Run the app
-```bash
-flutter run
-```
-
-### Building for Production
-
-```bash
-# Android APK
-flutter build apk --release
-
-# Android App Bundle
-flutter build appbundle --release
-```
 
 ## Project Structure
 
